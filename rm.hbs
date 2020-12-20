@@ -1,0 +1,90 @@
+[![view on npm](https://img.shields.io/npm/v/uttori-audio-padinfo.svg)](https://www.npmjs.org/package/uttori-audio-padinfo)
+[![npm module downloads](https://img.shields.io/npm/dt/uttori-audio-padinfo.svg)](https://www.npmjs.org/package/uttori-audio-padinfo)
+[![Build Status](https://travis-ci.org/uttori/uttori-audio-padinfo.svg?branch=master)](https://travis-ci.org/uttori/uttori-audio-padinfo)
+[![Dependency Status](https://david-dm.org/uttori/uttori-audio-padinfo.svg)](https://david-dm.org/uttori/uttori-audio-padinfo)
+[![Coverage Status](https://coveralls.io/repos/github/uttori/uttori-audio-padinfo/badge.svg?branch=master)](https://coveralls.io/github/uttori/uttori-audio-padinfo?branch=master)
+
+# Uttori Pad Info
+
+Utility to manipulate the PAD_INFO.BIN file for SP-404 / SP-404SX / SP-404A series of samplers.
+
+## Install
+
+```bash
+npm install --save uttori-audio-padinfo
+```
+
+* * *
+
+# Example
+
+```js
+const AudioPadInfo = require('uttori-audio-padinfo');
+const fs = require('fs');
+const data = fs.readFileSync('./PAD_INFO.bin');
+const { pads } = AudioPadInfo.fromFile(data);
+fs.writeFileSync('./output.json', JSON.stringify(pads, null, 2));
+console.log('Pads:', pads);
+➜ [
+    {
+      "label": "A1",
+      "originalSampleStart": 512,
+      "originalSampleEnd": 385388,
+      "userSampleStart": 512,
+      "userSampleEnd": 385388,
+      "volume": 87,
+      "lofi": false,
+      "loop": false,
+      "gate": false,
+      "reverse": true,
+      "format": "WAVE",
+      "channels": "Stereo",
+      "tempoMode": "Off",
+      "originalTempo": 109.9,
+      "userTempo": 109.9
+    },
+    ...,
+  {
+      "label": "J12",
+      "originalSampleStart": 512,
+      "originalSampleEnd": 53424,
+      "userSampleStart": 512,
+      "userSampleEnd": 53424,
+      "volume": 127,
+      "lofi": false,
+      "loop": false,
+      "gate": true,
+      "reverse": false,
+      "format": "WAVE",
+      "channels": "Stereo",
+      "tempoMode": "Off",
+      "originalTempo": 100,
+      "userTempo": 100
+    }
+  ]
+```
+
+# API Reference
+
+{{>main}}
+
+* * *
+
+## Tests
+
+To run the test suite, first install the dependencies, then run `npm test`:
+
+```bash
+npm install
+npm test
+DEBUG=Uttori* npm test
+```
+
+## Contributors
+
+* [Matthew Callis](https://github.com/MatthewCallis)
+* [You](https://github.com/YOU)
+
+## License
+
+* [MIT](LICENSE)
