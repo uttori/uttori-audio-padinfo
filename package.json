@@ -1,6 +1,6 @@
 {
   "name": "@uttori/audio-padinfo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Utility to manipulate the PAD_INFO.BIN file for SP-404 / SP-404SX / SP-404A series of samplers.",
   "author": "Matthew Callis <matthew.callis@gmail.com>",
   "contributors": [],
