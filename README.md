@@ -11,7 +11,7 @@ Utility to manipulate the PAD_INFO.BIN file for SP-404 / SP-404SX / SP-404A seri
 ## Install
 
 ```bash
-npm install --save uttori-audio-padinfo
+npm install --save @uttori/audio-padinfo
 ```
 
 * * *
@@ -19,11 +19,10 @@ npm install --save uttori-audio-padinfo
 # Example
 
 ```js
-const AudioPadInfo = require('uttori-audio-padinfo');
 const fs = require('fs');
+const AudioPadInfo = require('@uttori/audio-padinfo');
 const data = fs.readFileSync('./PAD_INFO.bin');
 const { pads } = AudioPadInfo.fromFile(data);
-fs.writeFileSync('./output.json', JSON.stringify(pads, null, 2));
 console.log('Pads:', pads);
 ➜ [
     {
