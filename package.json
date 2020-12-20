@@ -100,5 +100,9 @@
   "pre-commit": [
     "lint",
     "test"
-  ]
+  ],
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  }
 }
