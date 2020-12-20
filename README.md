@@ -3,6 +3,10 @@
 [![Build Status](https://travis-ci.org/uttori/uttori-audio-padinfo.svg?branch=master)](https://travis-ci.org/uttori/uttori-audio-padinfo)
 [![Dependency Status](https://david-dm.org/uttori/uttori-audio-padinfo.svg)](https://david-dm.org/uttori/uttori-audio-padinfo)
 [![Coverage Status](https://coveralls.io/repos/github/uttori/uttori-audio-padinfo/badge.svg?branch=master)](https://coveralls.io/github/uttori/uttori-audio-padinfo?branch=master)
+[![Tree-Shaking Support](https://badgen.net/bundlephobia/tree-shaking/@uttori/audio-padinfo)](https://bundlephobia.com/result?p=@uttori/audio-padinfo)
+[![Dependency Count](https://badgen.net/bundlephobia/dependency-count/@uttori/audio-padinfo)](https://bundlephobia.com/result?p=@uttori/audio-padinfo)
+[![Minified + GZip](https://badgen.net/bundlephobia/minzip/@uttori/audio-padinfo)](https://bundlephobia.com/result?p=@uttori/audio-padinfo)
+[![Minified](https://badgen.net/bundlephobia/min/@uttori/audio-padinfo)](https://bundlephobia.com/result?p=@uttori/audio-padinfo)
 
 # Uttori Pad Info
 
