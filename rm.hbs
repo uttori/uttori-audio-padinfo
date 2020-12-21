@@ -24,12 +24,13 @@ npm install --save @uttori/audio-padinfo
 
 ```js
 const fs = require('fs');
-const AudioPadInfo = require('@uttori/audio-padinfo');
+const { AudioPadInfo } = require('@uttori/audio-padinfo');
 const data = fs.readFileSync('./PAD_INFO.bin');
 const { pads } = AudioPadInfo.fromFile(data);
 console.log('Pads:', pads);
 ➜ [
     {
+      "avaliable": false,
       "label": "A1",
       "originalSampleStart": 512,
       "originalSampleEnd": 385388,
@@ -47,7 +48,8 @@ console.log('Pads:', pads);
       "userTempo": 109.9
     },
     ...,
-  {
+    {
+      "avaliable": false,
       "label": "J12",
       "originalSampleStart": 512,
       "originalSampleEnd": 53424,

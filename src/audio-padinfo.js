@@ -5,6 +5,7 @@ const { DataBuffer, DataBufferList, DataStream } = require('@uttori/data-tools')
  * A Pad object.
  *
  * @typedef {object} Pad
+ * @property {boolean} avaliable - If the pad is actively used in the pad file or not.
  * @property {string} label - The human readable pad text, `A1` - `J12`
  * @property {number} originalSampleStart - Sample start and end offsets are relative to the original file
  * @property {number} originalSampleEnd - SP-404SX Wave Converter v1.01 on macOS sets the start values to 512, the start of data
@@ -34,6 +35,7 @@ const { DataBuffer, DataBufferList, DataStream } = require('@uttori/data-tools')
  * console.log('Pads:', pads);
  * ➜ [
  *     {
+ *       "avaliable": false,
  *       "label": "A1",
  *       "originalSampleStart": 512,
  *       "originalSampleEnd": 385388,
@@ -52,6 +54,7 @@ const { DataBuffer, DataBufferList, DataStream } = require('@uttori/data-tools')
  *     },
  *     ...,
  *   {
+ *       "avaliable": false,
  *       "label": "J12",
  *       "originalSampleStart": 512,
  *       "originalSampleEnd": 53424,
@@ -246,6 +249,10 @@ class AudioPadInfo extends DataStream {
         originalTempo,
         userTempo,
       };
+
+      // Check to see if this is the default values, meaning the pad is not taken.
+      data.avaliable = AudioPadInfo.checkDefault(data);
+
       debug('Pad:', data);
       this.pads.push(data);
       index++;
@@ -346,6 +353,49 @@ class AudioPadInfo extends DataStream {
     pad.writeUInt32BE(tempo, 28);
 
     return pad;
+  }
+
+  /**
+   * Checks to see if a Pad is set to the default values, if so it is likely.
+   *
+   * @param {Pad} pad - The JSON values to check.
+   * @param {boolean} [strict=false] - When strict all values are checked for defaults, otherwise just the offsets are checked.
+   * @returns {boolean} - Returns true if the Pad is set the the default values, false otherwise.
+   * @memberof AudioPadInfo
+   * @static
+   */
+  static checkDefault(pad, strict = false) {
+    if (pad) {
+      if (
+        strict === false
+        && pad.originalSampleStart === 512
+        && pad.originalSampleEnd === 512
+        && pad.userSampleStart === 512
+        && pad.userSampleEnd === 512
+      ) {
+        return true;
+      }
+      if (
+        strict === true
+        && pad.originalSampleStart === 512
+        && pad.originalSampleEnd === 512
+        && pad.userSampleStart === 512
+        && pad.userSampleEnd === 512
+        && pad.volume === 127
+        && pad.lofi === false
+        && pad.loop === false
+        && pad.gate === true
+        && pad.reverse === false
+        && pad.format === 'WAVE'
+        && pad.channels === 2
+        && pad.tempoMode === 'Off'
+        && pad.originalTempo === 120
+        && pad.userTempo === 120
+      ) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

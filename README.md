@@ -24,12 +24,13 @@ npm install --save @uttori/audio-padinfo
 
 ```js
 const fs = require('fs');
-const AudioPadInfo = require('@uttori/audio-padinfo');
+const { AudioPadInfo } = require('@uttori/audio-padinfo');
 const data = fs.readFileSync('./PAD_INFO.bin');
 const { pads } = AudioPadInfo.fromFile(data);
 console.log('Pads:', pads);
 ➜ [
     {
+      "avaliable": false,
       "label": "A1",
       "originalSampleStart": 512,
       "originalSampleEnd": 385388,
@@ -47,7 +48,8 @@ console.log('Pads:', pads);
       "userTempo": 109.9
     },
     ...,
-  {
+    {
+      "avaliable": false,
       "label": "J12",
       "originalSampleStart": 512,
       "originalSampleEnd": 53424,
@@ -106,6 +108,7 @@ Uttori Pad Info - Utility to manipulate the PAD_INFO.BIN file for SP-404 series 
         * [.fromFile(data)](#AudioPadInfo.fromFile) ⇒ [<code>AudioPadInfo</code>](#AudioPadInfo)
         * [.fromBuffer(buffer)](#AudioPadInfo.fromBuffer) ⇒ [<code>AudioPadInfo</code>](#AudioPadInfo)
         * [.encodePad(data)](#AudioPadInfo.encodePad) ⇒ <code>Buffer</code>
+        * [.checkDefault(pad, [strict])](#AudioPadInfo.checkDefault) ⇒ <code>boolean</code>
         * [.getPadLabel(index)](#AudioPadInfo.getPadLabel) ⇒ <code>string</code>
         * [.getPadIndex(label)](#AudioPadInfo.getPadIndex) ⇒ <code>number</code>
 
@@ -130,6 +133,7 @@ fs.writeFileSync('./output.json', JSON.stringify(pads, null, 2));
 console.log('Pads:', pads);
 ➜ [
     {
+      "avaliable": false,
       "label": "A1",
       "originalSampleStart": 512,
       "originalSampleEnd": 385388,
@@ -148,6 +152,7 @@ console.log('Pads:', pads);
     },
     ...,
   {
+      "avaliable": false,
       "label": "J12",
       "originalSampleStart": 512,
       "originalSampleEnd": 53424,
@@ -225,6 +230,19 @@ Encode JSON values to a valid pad structure.
 | [data.originalTempo] | <code>number</code> | <code>1200</code> | Tempo is BPM (beats per minute) mutiplied by 10, 0x4B0 = 1200 = 120 bpm. |
 | [data.userTempo] | <code>number</code> | <code>1200</code> | SP-404SX Wave Converter v1.01 on macOS computes the original tempo as 120 / sample length. |
 
+<a name="AudioPadInfo.checkDefault"></a>
+
+### AudioPadInfo.checkDefault(pad, [strict]) ⇒ <code>boolean</code>
+Checks to see if a Pad is set to the default values, if so it is likely.
+
+**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
+**Returns**: <code>boolean</code> - - Returns true if the Pad is set the the default values, false otherwise.  
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| pad | [<code>Pad</code>](#Pad) |  | The JSON values to check. |
+| [strict] | <code>boolean</code> | <code>false</code> | When strict all values are checked for defaults, otherwise just the offsets are checked. |
+
 <a name="AudioPadInfo.getPadLabel"></a>
 
 ### AudioPadInfo.getPadLabel(index) ⇒ <code>string</code>
@@ -259,6 +277,7 @@ A Pad object.
 
 | Name | Type | Description |
 | --- | --- | --- |
+| avaliable | <code>boolean</code> | If the pad is actively used in the pad file or not. |
 | label | <code>string</code> | The human readable pad text, `A1` - `J12` |
 | originalSampleStart | <code>number</code> | Sample start and end offsets are relative to the original file |
 | originalSampleEnd | <code>number</code> | SP-404SX Wave Converter v1.01 on macOS sets the start values to 512, the start of data |

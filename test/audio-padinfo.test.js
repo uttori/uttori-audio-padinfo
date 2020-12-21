@@ -36,6 +36,7 @@ test('.parse(): can decode all entires in a PAD_INFO.BIN file', (t) => {
   const { pads } = AudioPadInfo.fromFile(data);
   t.is(pads.length, 120);
   t.deepEqual(pads[0], {
+    avaliable: false,
     channels: 'Stereo',
     format: 'WAVE',
     gate: false,
@@ -53,6 +54,7 @@ test('.parse(): can decode all entires in a PAD_INFO.BIN file', (t) => {
     volume: 87,
   });
   t.deepEqual(pads[119], {
+    avaliable: false,
     channels: 'Stereo',
     format: 'WAVE',
     gate: true,
@@ -76,6 +78,7 @@ test('.parse(): can decode an invalid entry (all 0xFF)', (t) => {
   const { pads } = AudioPadInfo.fromFile(data);
   t.is(pads.length, 1);
   t.deepEqual(pads[0], {
+    avaliable: false,
     channels: 'Invalid (255)',
     format: 'Invalid (255)',
     gate: 255,
@@ -99,6 +102,7 @@ test('.parse(): can decode edge cases, incompatible flags', (t) => {
   const { pads } = AudioPadInfo.fromFile(data);
   t.is(pads.length, 1);
   t.deepEqual(pads[0], {
+    avaliable: false,
     channels: 'Mono',
     format: 'AIFF',
     gate: true,
@@ -122,6 +126,7 @@ test('.parse(): can decode edge cases, ivalid volume flags', (t) => {
   const { pads } = AudioPadInfo.fromFile(data);
   t.is(pads.length, 1);
   t.deepEqual(pads[0], {
+    avaliable: false,
     channels: 'Mono',
     format: 'AIFF',
     gate: true,
@@ -309,4 +314,33 @@ test('AudioPadInfo.getPadIndex(label): returns a pad index or -1', (t) => {
     t.true(AudioPadInfo.getPadIndex(AudioPadInfo.getPadLabel(i)) < 120);
     t.true(AudioPadInfo.getPadIndex(AudioPadInfo.getPadLabel(i)) > -1);
   }
+});
+
+test('AudioPadInfo.checkDefault(pad): returns the booelan value of the default status', (t) => {
+  const data = {
+    originalSampleStart: 512,
+    originalSampleEnd: 512,
+    userSampleStart: 512,
+    userSampleEnd: 512,
+    volume: 127,
+    lofi: false,
+    loop: false,
+    gate: true,
+    reverse: false,
+    format: 'WAVE',
+    channels: 2,
+    tempoMode: 'Off',
+    originalTempo: 120,
+    userTempo: 120,
+  };
+  t.true(AudioPadInfo.checkDefault(data));
+  t.true(AudioPadInfo.checkDefault(data, true));
+
+  // Not matching defaults
+  t.false(AudioPadInfo.checkDefault());
+  t.false(AudioPadInfo.checkDefault({ ...data, originalSampleStart: 0 }));
+
+  // Not Strict vs Strict
+  t.true(AudioPadInfo.checkDefault({ ...data, format: 'AIFF' }));
+  t.false(AudioPadInfo.checkDefault({ ...data, format: 'AIFF' }, true));
 });

@@ -4,6 +4,7 @@ declare module "audio-padinfo" {
         static fromFile(data: Buffer): AudioPadInfo;
         static fromBuffer(buffer: any): AudioPadInfo;
         static encodePad(data?: Pad): Buffer;
+        static checkDefault(pad: Pad, strict?: boolean): boolean;
         static getPadLabel(index: number): string;
         static getPadIndex(label?: string): number;
         constructor(list: any, overrides?: {
@@ -16,6 +17,7 @@ declare module "audio-padinfo" {
         export { Pad };
     }
     type Pad = {
+        avaliable: boolean;
         label: string;
         originalSampleStart: number;
         originalSampleEnd: number;
