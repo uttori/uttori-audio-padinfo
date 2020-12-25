@@ -6,7 +6,8 @@ const { DataBuffer, DataBufferList, DataStream } = require('@uttori/data-tools')
  *
  * @typedef {object} Pad
  * @property {boolean} avaliable - If the pad is actively used in the pad file or not.
- * @property {string} label - The human readable pad text, `A1` - `J12`
+ * @property {string} label - The human readable pad text, `A1` - `J12`.
+ * @property {string} filename - The filename for the corresponding Wave File, `A0000001.WAV` - `J0000012.WAV`.
  * @property {number} originalSampleStart - Sample start and end offsets are relative to the original file
  * @property {number} originalSampleEnd - SP-404SX Wave Converter v1.01 on macOS sets the start values to 512, the start of data
  * @property {number} userSampleStart - The length of the RIFF headers before the data chunk is always exactly 512 bytes
@@ -37,6 +38,7 @@ const { DataBuffer, DataBufferList, DataStream } = require('@uttori/data-tools')
  *     {
  *       "avaliable": false,
  *       "label": "A1",
+ *       "filename": "A0000001.WAV",
  *       "originalSampleStart": 512,
  *       "originalSampleEnd": 385388,
  *       "userSampleStart": 512,
@@ -56,6 +58,7 @@ const { DataBuffer, DataBufferList, DataStream } = require('@uttori/data-tools')
  *   {
  *       "avaliable": false,
  *       "label": "J12",
+ *       "filename": "J0000012.WAV",
  *       "originalSampleStart": 512,
  *       "originalSampleEnd": 53424,
  *       "userSampleStart": 512,
@@ -135,6 +138,9 @@ class AudioPadInfo extends DataStream {
     let index = 0;
     while (this.remainingBytes()) {
       const label = AudioPadInfo.getPadLabel(index);
+
+      // SP404-SX: A0000009.WAV - J0000012.WAV
+      const filename = `${label.slice(0, 1)}${label.slice(1).padStart(7, 0)}.WAV`;
 
       // Sample start and end offsets are relative to the original file.
       // SP-404SX Wave Converter v1.01 on macOS sets the start values to 512, the start of data.
@@ -233,6 +239,7 @@ class AudioPadInfo extends DataStream {
       const userTempo = this.readUInt32() / 10;
 
       const data = {
+        filename,
         label,
         originalSampleStart,
         originalSampleEnd,

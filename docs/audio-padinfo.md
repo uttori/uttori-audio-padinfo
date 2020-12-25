@@ -62,6 +62,7 @@ console.log('Pads:', pads);
     {
       "avaliable": false,
       "label": "A1",
+      "filename": "A0000001.WAV",
       "originalSampleStart": 512,
       "originalSampleEnd": 385388,
       "userSampleStart": 512,
@@ -81,6 +82,7 @@ console.log('Pads:', pads);
   {
       "avaliable": false,
       "label": "J12",
+      "filename": "J0000012.WAV",
       "originalSampleStart": 512,
       "originalSampleEnd": 53424,
       "userSampleStart": 512,
@@ -205,7 +207,8 @@ A Pad object.
 | Name | Type | Description |
 | --- | --- | --- |
 | avaliable | <code>boolean</code> | If the pad is actively used in the pad file or not. |
-| label | <code>string</code> | The human readable pad text, `A1` - `J12` |
+| label | <code>string</code> | The human readable pad text, `A1` - `J12`. |
+| filename | <code>string</code> | The filename for the corresponding Wave File, `A0000001.WAV` - `J0000012.WAV`. |
 | originalSampleStart | <code>number</code> | Sample start and end offsets are relative to the original file |
 | originalSampleEnd | <code>number</code> | SP-404SX Wave Converter v1.01 on macOS sets the start values to 512, the start of data |
 | userSampleStart | <code>number</code> | The length of the RIFF headers before the data chunk is always exactly 512 bytes |

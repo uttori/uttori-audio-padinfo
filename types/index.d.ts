@@ -19,6 +19,7 @@ declare module "audio-padinfo" {
     type Pad = {
         avaliable: boolean;
         label: string;
+        filename: string;
         originalSampleStart: number;
         originalSampleEnd: number;
         userSampleStart: number;
