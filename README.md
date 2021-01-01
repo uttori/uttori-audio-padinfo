@@ -1,6 +1,6 @@
 [![view on npm](https://img.shields.io/npm/v/@uttori/audio-padinfo.svg)](https://www.npmjs.com/package/@uttori/audio-padinfo)
 [![npm module downloads](https://img.shields.io/npm/dt/@uttori/audio-padinfo.svg)](https://www.npmjs.com/package/@uttori/audio-padinfo)
-[![Build Status](https://travis-ci.org/uttori/uttori-audio-padinfo.svg?branch=master)](https://travis-ci.org/uttori/uttori-audio-padinfo)
+[![Build Status](https://travis-ci.com/uttori/uttori-audio-padinfo.svg?branch=master)](https://travis-ci.com/uttori/uttori-audio-padinfo)
 [![Dependency Status](https://david-dm.org/uttori/uttori-audio-padinfo.svg)](https://david-dm.org/uttori/uttori-audio-padinfo)
 [![Coverage Status](https://coveralls.io/repos/github/uttori/uttori-audio-padinfo/badge.svg?branch=master)](https://coveralls.io/github/uttori/uttori-audio-padinfo?branch=master)
 [![Tree-Shaking Support](https://badgen.net/bundlephobia/tree-shaking/@uttori/audio-padinfo)](https://bundlephobia.com/result?p=@uttori/audio-padinfo)
@@ -94,7 +94,7 @@ console.log('Pads:', pads);
 ## AudioPadInfo
 Uttori Pad Info - Utility to manipulate the PAD_INFO.BIN file for SP-404 series of samplers.
 
-**Kind**: global class  
+**Kind**: global class
 **Properties**
 
 | Name | Type | Description |
@@ -126,7 +126,7 @@ Creates an instance of AudioPadInfo.
 | [overrides] | <code>object</code> |  | Options for this instance. |
 | [overrides.size] | <code>number</code> | <code>16</code> | ArrayBuffer byteLength for the underlying binary parsing. |
 
-**Example** *(AudioPadInfo)*  
+**Example** *(AudioPadInfo)*
 ```js
 const fs = require('fs');
 const data = fs.readFileSync('./PAD_INFO.bin');
@@ -183,14 +183,14 @@ Parse the PAD_INFO.BIN file, decoding the supported pad info.
 This is stored alongside the samples in PAD_INFO.BIN and contains 120 × 32-byte records, one for each pad from A1 to J12.
 In this file, values are stored in big-endian order
 
-**Kind**: instance method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
+**Kind**: instance method of [<code>AudioPadInfo</code>](#AudioPadInfo)
 <a name="AudioPadInfo.fromFile"></a>
 
 ### AudioPadInfo.fromFile(data) ⇒ [<code>AudioPadInfo</code>](#AudioPadInfo)
 Creates a new AudioPadInfo from file data.
 
-**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
-**Returns**: [<code>AudioPadInfo</code>](#AudioPadInfo) - the new AudioPadInfo instance for the provided file data  
+**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)
+**Returns**: [<code>AudioPadInfo</code>](#AudioPadInfo) - the new AudioPadInfo instance for the provided file data
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -201,8 +201,8 @@ Creates a new AudioPadInfo from file data.
 ### AudioPadInfo.fromBuffer(buffer) ⇒ [<code>AudioPadInfo</code>](#AudioPadInfo)
 Creates a new AudioPadInfo from a DataBuffer.
 
-**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
-**Returns**: [<code>AudioPadInfo</code>](#AudioPadInfo) - the new AudioPadInfo instance for the provided DataBuffer  
+**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)
+**Returns**: [<code>AudioPadInfo</code>](#AudioPadInfo) - the new AudioPadInfo instance for the provided DataBuffer
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -213,8 +213,8 @@ Creates a new AudioPadInfo from a DataBuffer.
 ### AudioPadInfo.encodePad(data) ⇒ <code>Buffer</code>
 Encode JSON values to a valid pad structure.
 
-**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
-**Returns**: <code>Buffer</code> - - The new pad Buffer.  
+**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)
+**Returns**: <code>Buffer</code> - - The new pad Buffer.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -239,8 +239,8 @@ Encode JSON values to a valid pad structure.
 ### AudioPadInfo.checkDefault(pad, [strict]) ⇒ <code>boolean</code>
 Checks to see if a Pad is set to the default values, if so it is likely.
 
-**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
-**Returns**: <code>boolean</code> - - Returns true if the Pad is set the the default values, false otherwise.  
+**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)
+**Returns**: <code>boolean</code> - - Returns true if the Pad is set the the default values, false otherwise.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -252,8 +252,8 @@ Checks to see if a Pad is set to the default values, if so it is likely.
 ### AudioPadInfo.getPadLabel(index) ⇒ <code>string</code>
 Convert a numberic value used in the PAD_INFO.bin file for that pad to the pad label like `A1` or `J12`.
 
-**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
-**Returns**: <code>string</code> - - The pad label like `A1` or `J12`.  
+**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)
+**Returns**: <code>string</code> - - The pad label like `A1` or `J12`.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -264,8 +264,8 @@ Convert a numberic value used in the PAD_INFO.bin file for that pad to the pad l
 ### AudioPadInfo.getPadIndex(label) ⇒ <code>number</code>
 Convert a pad label like `A1` or `J12` to the numberic value used in the PAD_INFO.bin file for that pad.
 
-**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
-**Returns**: <code>number</code> - - The numberic value used in the PAD_INFO.bin file.  
+**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)
+**Returns**: <code>number</code> - - The numberic value used in the PAD_INFO.bin file.
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -276,7 +276,7 @@ Convert a pad label like `A1` or `J12` to the numberic value used in the PAD_INF
 ## Pad : <code>object</code>
 A Pad object.
 
-**Kind**: global typedef  
+**Kind**: global typedef
 **Properties**
 
 | Name | Type | Description |

@@ -1,4 +1,4 @@
-const debug = require('debug')('Uttori.Utility.AudioPadInfo');
+let debug = () => {}; try { debug = require('debug')('Uttori.Utility.AudioPadInfo'); } catch {}
 const { DataBuffer, DataBufferList, DataStream } = require('@uttori/data-tools');
 
 /**
