@@ -28,12 +28,10 @@ Uttori Pad Info - Utility to manipulate the PAD_INFO.BIN file for SP-404 series 
 
 
 * [AudioPadInfo](#AudioPadInfo)
-    * [new AudioPadInfo(list, [overrides])](#new_AudioPadInfo_new)
+    * [new AudioPadInfo([input])](#new_AudioPadInfo_new)
     * _instance_
         * [.parse()](#AudioPadInfo+parse)
     * _static_
-        * [.fromFile(data)](#AudioPadInfo.fromFile) ⇒ [<code>AudioPadInfo</code>](#AudioPadInfo)
-        * [.fromBuffer(buffer)](#AudioPadInfo.fromBuffer) ⇒ [<code>AudioPadInfo</code>](#AudioPadInfo)
         * [.encodePad(data)](#AudioPadInfo.encodePad) ⇒ <code>Buffer</code>
         * [.checkDefault(pad, [strict])](#AudioPadInfo.checkDefault) ⇒ <code>boolean</code>
         * [.getPadLabel(index)](#AudioPadInfo.getPadLabel) ⇒ <code>string</code>
@@ -41,21 +39,19 @@ Uttori Pad Info - Utility to manipulate the PAD_INFO.BIN file for SP-404 series 
 
 <a name="new_AudioPadInfo_new"></a>
 
-### new AudioPadInfo(list, [overrides])
+### new AudioPadInfo([input])
 Creates an instance of AudioPadInfo.
 
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| list | <code>DataBufferList</code> |  | The DataBufferList of the audio file to process. |
-| [overrides] | <code>object</code> |  | Options for this instance. |
-| [overrides.size] | <code>number</code> | <code>16</code> | ArrayBuffer byteLength for the underlying binary parsing. |
+| Param | Type | Description |
+| --- | --- | --- |
+| [input] | <code>Array.&lt;number&gt;</code> \| <code>ArrayBuffer</code> \| <code>Buffer</code> \| <code>DataBuffer</code> \| <code>Int8Array</code> \| <code>Int16Array</code> \| <code>Int32Array</code> \| <code>number</code> \| <code>string</code> \| <code>Uint8Array</code> \| <code>Uint16Array</code> \| <code>Uint32Array</code> \| <code>undefined</code> | The data to process. |
 
 **Example** *(AudioPadInfo)*  
 ```js
-const fs = require('fs');
+import fs from 'fs';
 const data = fs.readFileSync('./PAD_INFO.bin');
-const { pads } = AudioPadInfo.fromFile(data);
+const { pads } = new AudioPadInfo(data);
 fs.writeFileSync('./output.json', JSON.stringify(pads, null, 2));
 console.log('Pads:', pads);
 ➜ [
@@ -109,30 +105,6 @@ This is stored alongside the samples in PAD_INFO.BIN and contains 120 × 32-byte
 In this file, values are stored in big-endian order
 
 **Kind**: instance method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
-<a name="AudioPadInfo.fromFile"></a>
-
-### AudioPadInfo.fromFile(data) ⇒ [<code>AudioPadInfo</code>](#AudioPadInfo)
-Creates a new AudioPadInfo from file data.
-
-**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
-**Returns**: [<code>AudioPadInfo</code>](#AudioPadInfo) - the new AudioPadInfo instance for the provided file data  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| data | <code>Buffer</code> | The data of the image to process. |
-
-<a name="AudioPadInfo.fromBuffer"></a>
-
-### AudioPadInfo.fromBuffer(buffer) ⇒ [<code>AudioPadInfo</code>](#AudioPadInfo)
-Creates a new AudioPadInfo from a DataBuffer.
-
-**Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
-**Returns**: [<code>AudioPadInfo</code>](#AudioPadInfo) - the new AudioPadInfo instance for the provided DataBuffer  
-
-| Param | Type | Description |
-| --- | --- | --- |
-| buffer | <code>DataBuffer</code> | The DataBuffer of the image to process. |
-
 <a name="AudioPadInfo.encodePad"></a>
 
 ### AudioPadInfo.encodePad(data) ⇒ <code>Buffer</code>
@@ -141,23 +113,9 @@ Encode JSON values to a valid pad structure.
 **Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
 **Returns**: <code>Buffer</code> - - The new pad Buffer.  
 
-| Param | Type | Default | Description |
-| --- | --- | --- | --- |
-| data | [<code>Pad</code>](#Pad) |  | The JSON values to encode. |
-| [data.originalSampleStart] | <code>number</code> | <code>512</code> | Sample start and end offsets are relative to the original file. |
-| [data.originalSampleEnd] | <code>number</code> | <code>512</code> | SP-404SX Wave Converter v1.01 on macOS sets the start values to 512, the start of data. |
-| [data.userSampleStart] | <code>number</code> | <code>512</code> | The length of the RIFF headers before the data chunk is always exactly 512 bytes. |
-| [data.userSampleEnd] | <code>number</code> | <code>512</code> | The sample end value is the length of the file, and when converted correctly this is the length of the whole file. |
-| [data.volume] | <code>number</code> | <code>127</code> | Volume is between 0 and 127. |
-| [data.lofi] | <code>boolean</code> | <code>false</code> | LoFi: false off, true on |
-| [data.loop] | <code>boolean</code> | <code>false</code> | Loop: false off, true on |
-| [data.gate] | <code>boolean</code> | <code>true</code> | Gate: false off, true on |
-| [data.reverse] | <code>boolean</code> | <code>false</code> | Reverse: false off, true on |
-| [data.format] | <code>string</code> | <code>&quot;&#x27;WAVE&#x27;&quot;</code> | Format is 0 for an 'AIFF' sample, and 1 for a 'WAVE' sample. |
-| [data.channels] | <code>number</code> | <code>2</code> | Mono or Stereo |
-| [data.tempoMode] | <code>string</code> | <code>&quot;&#x27;Off&#x27;&quot;</code> | Tempo Mode: 0 = 'Off', 1 = 'Pattern', 2 = 'User' |
-| [data.originalTempo] | <code>number</code> | <code>1200</code> | Tempo is BPM (beats per minute) mutiplied by 10, 0x4B0 = 1200 = 120 bpm. |
-| [data.userTempo] | <code>number</code> | <code>1200</code> | SP-404SX Wave Converter v1.01 on macOS computes the original tempo as 120 / sample length. |
+| Param | Type | Description |
+| --- | --- | --- |
+| data | [<code>Pad</code>](#Pad) | The JSON values to encode. |
 
 <a name="AudioPadInfo.checkDefault"></a>
 
@@ -169,7 +127,7 @@ Checks to see if a Pad is set to the default values, if so it is likely.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
-| pad | [<code>Pad</code>](#Pad) |  | The JSON values to check. |
+| pad | [<code>Partial.&lt;Pad&gt;</code>](#Pad) |  | The JSON values to check. |
 | [strict] | <code>boolean</code> | <code>false</code> | When strict all values are checked for defaults, otherwise just the offsets are checked. |
 
 <a name="AudioPadInfo.getPadLabel"></a>
@@ -178,7 +136,7 @@ Checks to see if a Pad is set to the default values, if so it is likely.
 Convert a numberic value used in the PAD_INFO.bin file for that pad to the pad label like `A1` or `J12`.
 
 **Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
-**Returns**: <code>string</code> - - The pad label like `A1` or `J12`.  
+**Returns**: <code>string</code> - The pad label like `A1` or `J12`.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -190,7 +148,7 @@ Convert a numberic value used in the PAD_INFO.bin file for that pad to the pad l
 Convert a pad label like `A1` or `J12` to the numberic value used in the PAD_INFO.bin file for that pad.
 
 **Kind**: static method of [<code>AudioPadInfo</code>](#AudioPadInfo)  
-**Returns**: <code>number</code> - - The numberic value used in the PAD_INFO.bin file.  
+**Returns**: <code>number</code> - The numberic value used in the PAD_INFO.bin file.  
 
 | Param | Type | Description |
 | --- | --- | --- |
@@ -214,13 +172,13 @@ A Pad object.
 | userSampleStart | <code>number</code> | The length of the RIFF headers before the data chunk is always exactly 512 bytes |
 | userSampleEnd | <code>number</code> | The sample end value is the length of the file, and when converted correctly this is the length of the whole file |
 | volume | <code>number</code> | Volume is between 0 and 127 |
-| lofi | <code>boolean</code> | LoFi: false off, true on |
-| loop | <code>boolean</code> | Loop: false off, true on |
-| gate | <code>boolean</code> | Gate: false off, true on |
-| reverse | <code>boolean</code> | Reverse: false off, true on |
+| lofi | <code>boolean</code> \| <code>number</code> | LoFi: false off, true on |
+| loop | <code>boolean</code> \| <code>number</code> | Loop: false off, true on |
+| gate | <code>boolean</code> \| <code>number</code> | Gate: false off, true on |
+| reverse | <code>boolean</code> \| <code>number</code> | Reverse: false off, true on |
 | format | <code>string</code> | Format is 0 for an 'AIFF' sample, and 1 for a 'WAVE' sample |
-| channels | <code>number</code> | Mono or Stereo |
-| tempoMode | <code>string</code> | Tempo Mode: 0 = 'Off', 1 = 'Pattern', 2 = 'User' |
+| channels | <code>number</code> \| <code>string</code> | Mono or Stereo |
+| tempoMode | <code>number</code> \| <code>string</code> | Tempo Mode: 0 = 'Off', 1 = 'Pattern', 2 = 'User' |
 | originalTempo | <code>number</code> | BPM determined by the software. Tempo is BPM (beats per minute) mutiplied by 10, 0x4B0 = 1200 = 120 bpm |
 | userTempo | <code>number</code> | User set BPM on the device |
 

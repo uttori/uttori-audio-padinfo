@@ -1,0 +1,32 @@
+{
+  "include": [
+    "*"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "compilerOptions": {
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "checkJs": true,
+    "declaration": true,
+    "downlevelIteration": true,
+    "emitDeclarationOnly": false,
+    "extendedDiagnostics": true,
+    "forceConsistentCasingInFileNames": true,
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "module": "NodeNext",
+    "moduleResolution": "nodenext",
+    "noEmit": true,
+    "sourceMap": true,
+    "strict": false,
+    "target": "esnext",
+    "removeComments": false,
+    "skipLibCheck": true,
+    "declarationMap": true
+  }
+}

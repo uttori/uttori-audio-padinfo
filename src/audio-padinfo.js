@@ -1,37 +1,38 @@
-let debug = () => {}; try { debug = require('debug')('Uttori.Utility.AudioPadInfo'); } catch {}
-const { DataBuffer, DataBufferList, DataStream } = require('@uttori/data-tools');
+import { DataBuffer } from '@uttori/data-tools';
+
+let debug = (..._) => {}; try { const { default: d } = await import('debug'); debug = d('Uttori.AudioPadInfo'); } catch {}
+
+// https://static.roland.com/manuals/sp-404mk2_reference/eng/17805468.html
 
 /**
  * A Pad object.
- *
  * @typedef {object} Pad
- * @property {boolean} avaliable - If the pad is actively used in the pad file or not.
- * @property {string} label - The human readable pad text, `A1` - `J12`.
- * @property {string} filename - The filename for the corresponding Wave File, `A0000001.WAV` - `J0000012.WAV`.
- * @property {number} originalSampleStart - Sample start and end offsets are relative to the original file
- * @property {number} originalSampleEnd - SP-404SX Wave Converter v1.01 on macOS sets the start values to 512, the start of data
- * @property {number} userSampleStart - The length of the RIFF headers before the data chunk is always exactly 512 bytes
- * @property {number} userSampleEnd - The sample end value is the length of the file, and when converted correctly this is the length of the whole file
- * @property {number} volume - Volume is between 0 and 127
- * @property {boolean} lofi - LoFi: false off, true on
- * @property {boolean} loop - Loop: false off, true on
- * @property {boolean} gate - Gate: false off, true on
- * @property {boolean} reverse - Reverse: false off, true on
- * @property {string} format - Format is 0 for an 'AIFF' sample, and 1 for a 'WAVE' sample
- * @property {number} channels - Mono or Stereo
- * @property {string} tempoMode - Tempo Mode: 0 = 'Off', 1 = 'Pattern', 2 = 'User'
- * @property {number} originalTempo - BPM determined by the software. Tempo is BPM (beats per minute) mutiplied by 10, 0x4B0 = 1200 = 120 bpm
- * @property {number} userTempo - User set BPM on the device
+ * @property {boolean} avaliable If the pad is actively used in the pad file or not.
+ * @property {string} label The human readable pad text, `A1` - `J12`.
+ * @property {string} filename The filename for the corresponding Wave File, `A0000001.WAV` - `J0000012.WAV`.
+ * @property {number} originalSampleStart Sample start and end offsets are relative to the original file
+ * @property {number} originalSampleEnd SP-404SX Wave Converter v1.01 on macOS sets the start values to 512, the start of data
+ * @property {number} userSampleStart The length of the RIFF headers before the data chunk is always exactly 512 bytes
+ * @property {number} userSampleEnd The sample end value is the length of the file, and when converted correctly this is the length of the whole file
+ * @property {number} volume Volume is between 0 and 127
+ * @property {boolean | number} lofi LoFi: false off, true on
+ * @property {boolean | number} loop Loop: false off, true on
+ * @property {boolean | number} gate Gate: false off, true on
+ * @property {boolean | number} reverse Reverse: false off, true on
+ * @property {string} format Format is 0 for an 'AIFF' sample, and 1 for a 'WAVE' sample
+ * @property {number | string} channels Mono or Stereo
+ * @property {number | string} tempoMode Tempo Mode: 0 = 'Off', 1 = 'Pattern', 2 = 'User'
+ * @property {number} originalTempo BPM determined by the software. Tempo is BPM (beats per minute) mutiplied by 10, 0x4B0 = 1200 = 120 bpm
+ * @property {number} userTempo User set BPM on the device
  */
 
 /**
  * Uttori Pad Info - Utility to manipulate the PAD_INFO.BIN file for SP-404 series of samplers.
- *
  * @property {Pad[]} pads - Parsed Pads
  * @example <caption>AudioPadInfo</caption>
- * const fs = require('fs');
+ * import fs from 'fs';
  * const data = fs.readFileSync('./PAD_INFO.bin');
- * const { pads } = AudioPadInfo.fromFile(data);
+ * const { pads } = new AudioPadInfo(data);
  * fs.writeFileSync('./output.json', JSON.stringify(pads, null, 2));
  * console.log('Pads:', pads);
  * ➜ [
@@ -77,54 +78,18 @@ const { DataBuffer, DataBufferList, DataStream } = require('@uttori/data-tools')
  *   ]
  * @class
  */
-class AudioPadInfo extends DataStream {
+class AudioPadInfo extends DataBuffer {
 /**
  * Creates an instance of AudioPadInfo.
- *
- * @param {DataBufferList} list - The DataBufferList of the audio file to process.
- * @param {object} [overrides] - Options for this instance.
- * @param {number} [overrides.size=16] - ArrayBuffer byteLength for the underlying binary parsing.
+ * @param {number[]|ArrayBuffer|Buffer|DataBuffer|Int8Array|Int16Array|Int32Array|number|string|Uint8Array|Uint16Array|Uint32Array|undefined} [input] The data to process.
  * @class
  */
-  constructor(list, overrides) {
-    const options = {
-      size: 16,
-      ...overrides,
-    };
-    super(list, options);
+  constructor(input) {
+    super(input);
 
     this.pads = [];
 
     this.parse();
-  }
-
-  /**
-   * Creates a new AudioPadInfo from file data.
-   *
-   * @param {Buffer} data - The data of the image to process.
-   * @returns {AudioPadInfo} the new AudioPadInfo instance for the provided file data
-   * @static
-   */
-  static fromFile(data) {
-    debug('fromFile:', data.length);
-    const buffer = new DataBuffer(data);
-    const list = new DataBufferList();
-    list.append(buffer);
-    return new AudioPadInfo(list, { size: data.length });
-  }
-
-  /**
-   * Creates a new AudioPadInfo from a DataBuffer.
-   *
-   * @param {DataBuffer} buffer - The DataBuffer of the image to process.
-   * @returns {AudioPadInfo} the new AudioPadInfo instance for the provided DataBuffer
-   * @static
-   */
-  static fromBuffer(buffer) {
-    debug('fromBuffer:', buffer.length);
-    const list = new DataBufferList();
-    list.append(buffer);
-    return new AudioPadInfo(list, { size: buffer.length });
   }
 
   /**
@@ -140,7 +105,7 @@ class AudioPadInfo extends DataStream {
       const label = AudioPadInfo.getPadLabel(index);
 
       // SP404-SX: A0000009.WAV - J0000012.WAV
-      const filename = `${label.slice(0, 1)}${label.slice(1).padStart(7, 0)}.WAV`;
+      const filename = `${label.slice(0, 1)}${label.slice(1).padStart(7, '0')}.WAV`;
 
       // Sample start and end offsets are relative to the original file.
       // SP-404SX Wave Converter v1.01 on macOS sets the start values to 512, the start of data.
@@ -151,13 +116,13 @@ class AudioPadInfo extends DataStream {
       const userSampleStart = this.readUInt32();
       const userSampleEnd = this.readUInt32();
 
-      // Volume is between 0 and 127.
+      /** @type {number} Volume is between 0 and 127 */
       const volume = this.readUInt8();
       if (volume < 0 || volume > 127) {
         debug('Invalid Volume:', volume);
       }
 
-      // LoFi: 0 off, 1 on
+      /** @type {boolean | number} LoFi: 0 off, 1 on */
       let lofi = this.readUInt8();
       if (lofi === 1) {
         lofi = true;
@@ -167,7 +132,7 @@ class AudioPadInfo extends DataStream {
         debug('Invalid LoFi:', lofi);
       }
 
-      // Loop: 0 off, 1 on
+      /** @type {boolean | number} Loop: 0 off, 1 on */
       let loop = this.readUInt8();
       if (loop === 1) {
         loop = true;
@@ -177,7 +142,7 @@ class AudioPadInfo extends DataStream {
         debug('Invalid Loop:', loop);
       }
 
-      // Gate: 0 off, 1 on
+      /** @type {boolean | number} Gate: 0 off, 1 on */
       let gate = this.readUInt8();
       if (gate === 1) {
         gate = true;
@@ -187,7 +152,7 @@ class AudioPadInfo extends DataStream {
         debug('Invalid Gate:', gate);
       }
 
-      // Reverse: 0 off, 1 on
+      /** @type {boolean | number} Reverse: 0 off, 1 on */
       let reverse = this.readUInt8();
       if (reverse === 1) {
         reverse = true;
@@ -197,8 +162,11 @@ class AudioPadInfo extends DataStream {
         debug('Invalid Reverse:', reverse);
       }
 
-      // Format is 0 for an AIFF sample, and 1 for a WAVE sample.
-      // This may simply correspond to the endianness of the data (0 = big endian, 1 = little endian).
+      /**
+       * Format is 0 for an AIFF sample, and 1 for a WAVE sample.
+       * This may simply correspond to the endianness of the data (0 = big endian, 1 = little endian).
+       * @type {string | number}
+       */
       let format = this.readUInt8();
       if (format === 1) {
         format = 'WAVE';
@@ -209,7 +177,7 @@ class AudioPadInfo extends DataStream {
         format = `Invalid (${format})`;
       }
 
-      // Mono or Stereo
+      /** @type {number | string} Mono or Stereo */
       let channels = this.readUInt8();
       if (channels === 1) {
         channels = 'Mono';
@@ -220,7 +188,7 @@ class AudioPadInfo extends DataStream {
         channels = `Invalid (${channels})`;
       }
 
-      // Tempo Mode: 0 = 'Off', 1 = 'Pattern', 2 = 'User'
+      /** @type {string | number} Tempo Mode: 0 = 'Off', 1 = 'Pattern', 2 = 'User' */
       let tempoMode = this.readUInt8();
       if (tempoMode === 0) {
         tempoMode = 'Off';
@@ -238,7 +206,9 @@ class AudioPadInfo extends DataStream {
       const originalTempo = this.readUInt32() / 10;
       const userTempo = this.readUInt32() / 10;
 
+      /** @type {Pad} */
       const data = {
+        avaliable: false,
         filename,
         label,
         originalSampleStart,
@@ -268,27 +238,11 @@ class AudioPadInfo extends DataStream {
 
   /**
    * Encode JSON values to a valid pad structure.
-   *
    * @param {Pad} data - The JSON values to encode.
-   * @param {number} [data.originalSampleStart=512] - Sample start and end offsets are relative to the original file.
-   * @param {number} [data.originalSampleEnd=512] - SP-404SX Wave Converter v1.01 on macOS sets the start values to 512, the start of data.
-   * @param {number} [data.userSampleStart=512] - The length of the RIFF headers before the data chunk is always exactly 512 bytes.
-   * @param {number} [data.userSampleEnd=512] - The sample end value is the length of the file, and when converted correctly this is the length of the whole file.
-   * @param {number} [data.volume=127] - Volume is between 0 and 127.
-   * @param {boolean} [data.lofi=false] - LoFi: false off, true on
-   * @param {boolean} [data.loop=false] - Loop: false off, true on
-   * @param {boolean} [data.gate=true] - Gate: false off, true on
-   * @param {boolean} [data.reverse=false] - Reverse: false off, true on
-   * @param {string} [data.format='WAVE'] - Format is 0 for an 'AIFF' sample, and 1 for a 'WAVE' sample.
-   * @param {number} [data.channels=2] - Mono or Stereo
-   * @param {string} [data.tempoMode='Off'] - Tempo Mode: 0 = 'Off', 1 = 'Pattern', 2 = 'User'
-   * @param {number} [data.originalTempo=1200] - Tempo is BPM (beats per minute) mutiplied by 10, 0x4B0 = 1200 = 120 bpm.
-   * @param {number} [data.userTempo=1200] - SP-404SX Wave Converter v1.01 on macOS computes the original tempo as 120 / sample length.
    * @returns {Buffer} - The new pad Buffer.
-   * @memberof AudioPadInfo
    * @static
    */
-  static encodePad(data = {}) {
+  static encodePad(data) {
     const {
       originalSampleStart = 512,
       originalSampleEnd = 512,
@@ -364,11 +318,9 @@ class AudioPadInfo extends DataStream {
 
   /**
    * Checks to see if a Pad is set to the default values, if so it is likely.
-   *
-   * @param {Pad} pad - The JSON values to check.
-   * @param {boolean} [strict=false] - When strict all values are checked for defaults, otherwise just the offsets are checked.
+   * @param {Partial<Pad>} pad - The JSON values to check.
+   * @param {boolean} [strict] - When strict all values are checked for defaults, otherwise just the offsets are checked.
    * @returns {boolean} - Returns true if the Pad is set the the default values, false otherwise.
-   * @memberof AudioPadInfo
    * @static
    */
   static checkDefault(pad, strict = false) {
@@ -407,10 +359,8 @@ class AudioPadInfo extends DataStream {
 
   /**
    * Convert a numberic value used in the PAD_INFO.bin file for that pad to the pad label like `A1` or `J12`.
-   *
-   * @param {number} index - The numberic value used in the PAD_INFO.bin file.
-   * @returns {string} - The pad label like `A1` or `J12`.
-   * @memberof AudioPadInfo
+   * @param {number} index The numberic value used in the PAD_INFO.bin file.
+   * @returns {string} The pad label like `A1` or `J12`.
    * @static
    */
   static getPadLabel(index) {
@@ -545,10 +495,8 @@ class AudioPadInfo extends DataStream {
 
   /**
    * Convert a pad label like `A1` or `J12` to the numberic value used in the PAD_INFO.bin file for that pad.
-   *
-   * @param {string} label - The pad label like `A1` or `J12`.
-   * @returns {number} - The numberic value used in the PAD_INFO.bin file.
-   * @memberof AudioPadInfo
+   * @param {string} label The pad label like `A1` or `J12`.
+   * @returns {number} The numberic value used in the PAD_INFO.bin file.
    * @static
    */
   static getPadIndex(label = '') {
@@ -682,4 +630,4 @@ class AudioPadInfo extends DataStream {
   }
 }
 
-module.exports = AudioPadInfo;
+export default AudioPadInfo;
