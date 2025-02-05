@@ -227,8 +227,6 @@ const renderToPatternFormNotePadMapping = (usedNotes, chunkNode, userMapping) =>
 };
 
 const renderToMidiFormNotePadMapping = (usedPads, chunkNode, userMapping) => {
-  const defaultMapKeys = Object.keys(AudioPattern.defaultMap);
-
   usedPads.forEach((pad) => {
     const row = document.createElement('div');
     row.className = 'detail form-group';
@@ -268,6 +266,7 @@ const renderToMidiFormNotePadMapping = (usedPads, chunkNode, userMapping) => {
 
     row.appendChild(select);
     chunkNode.appendChild(row);
+    select.dispatchEvent(new Event('change'));
   });
 };
 

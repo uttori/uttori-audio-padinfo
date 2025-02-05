@@ -2236,7 +2236,7 @@ class AudioMIDI extends DataBuffer {
   }
 }
 
-let debug = (..._) => {}; try { const { default: d } = await Promise.resolve().then(function () { return index; }); debug = d('Uttori.AudioPattern'); } catch {}
+let debug = (..._) => { console.log(_); }; try { const { default: d } = await Promise.resolve().then(function () { return index; }); debug = d('Uttori.AudioPattern'); } catch {}
 class AudioPattern extends DataBuffer {
   constructor(input, options = { bytesPerNote: 8, padsPerBank: 16, og: false }) {
     super(input);
@@ -3063,6 +3063,7 @@ const renderToMidiFormNotePadMapping = (usedPads, chunkNode, userMapping) => {
     });
     row.appendChild(select);
     chunkNode.appendChild(row);
+    select.dispatchEvent(new Event('change'));
   });
 };
 document.querySelector('#midi-file')?.addEventListener('change', (e) => {
