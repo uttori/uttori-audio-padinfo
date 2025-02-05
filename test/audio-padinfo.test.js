@@ -1,39 +1,16 @@
-const fs = require('fs');
-const test = require('ava');
-const { DataBuffer, DataBufferList } = require('@uttori/data-tools');
-const { AudioPadInfo } = require('../src');
+import fs from 'fs';
+import test from 'ava';
+import AudioPadInfo from '../src/audio-padinfo.js';
 
 test('constructor(list, options): can initialize', (t) => {
   const data = fs.readFileSync('./test/assets/PAD_INFO.BIN');
-  const buffer = new DataBuffer(data);
-  const list = new DataBufferList();
-  list.append(buffer);
-
-  let audio;
-  t.notThrows(() => {
-    audio = new AudioPadInfo(list, { size: data.length });
-  });
+  const audio = new AudioPadInfo(data);
   t.is(audio.pads.length, 120);
-});
-
-test('AudioWAV.fromFile(data): can read a valid file', (t) => {
-  const data = fs.readFileSync('./test/assets/PAD_INFO.BIN');
-  t.notThrows(() => {
-    AudioPadInfo.fromFile(data);
-  });
-});
-
-test('AudioWAV.fromBuffer(buffer): can read a valid file buffer', (t) => {
-  const data = fs.readFileSync('./test/assets/PAD_INFO.BIN');
-  const buffer = new DataBuffer(data);
-  t.notThrows(() => {
-    AudioPadInfo.fromBuffer(buffer);
-  });
 });
 
 test('.parse(): can decode all entires in a PAD_INFO.BIN file', (t) => {
   const data = fs.readFileSync('./test/assets/PAD_INFO.BIN');
-  const { pads } = AudioPadInfo.fromFile(data);
+  const { pads } = new AudioPadInfo(data);
   t.is(pads.length, 120);
   t.deepEqual(pads[0], {
     avaliable: false,
@@ -77,7 +54,7 @@ test('.parse(): can decode all entires in a PAD_INFO.BIN file', (t) => {
 
 test('.parse(): can decode an invalid entry (all 0xFF)', (t) => {
   const data = fs.readFileSync('./test/assets/BAD_PAD.BIN');
-  const { pads } = AudioPadInfo.fromFile(data);
+  const { pads } = new AudioPadInfo(data);
   t.is(pads.length, 1);
   t.deepEqual(pads[0], {
     avaliable: false,
@@ -102,7 +79,7 @@ test('.parse(): can decode an invalid entry (all 0xFF)', (t) => {
 
 test('.parse(): can decode edge cases, incompatible flags', (t) => {
   const data = fs.readFileSync('./test/assets/OPTIONS_A.BIN');
-  const { pads } = AudioPadInfo.fromFile(data);
+  const { pads } = new AudioPadInfo(data);
   t.is(pads.length, 1);
   t.deepEqual(pads[0], {
     avaliable: false,
@@ -127,7 +104,7 @@ test('.parse(): can decode edge cases, incompatible flags', (t) => {
 
 test('.parse(): can decode edge cases, ivalid volume flags', (t) => {
   const data = fs.readFileSync('./test/assets/OPTIONS_B.BIN');
-  const { pads } = AudioPadInfo.fromFile(data);
+  const { pads } = new AudioPadInfo(data);
   t.is(pads.length, 1);
   t.deepEqual(pads[0], {
     avaliable: false,
@@ -170,62 +147,62 @@ test('AudioWAV.encodePad(data): can encode a default PAD_INFO.BIN pad', (t) => {
   };
   let pad = AudioPadInfo.encodePad(data);
   t.deepEqual(pad, valid);
-  pad = AudioPadInfo.encodePad();
+  pad = AudioPadInfo.encodePad({});
   t.deepEqual(pad, valid);
 
   // Lo-Fi
   pad = AudioPadInfo.encodePad({ lofi: true });
-  t.true(AudioPadInfo.fromFile(pad).pads[0].lofi);
+  t.true(new AudioPadInfo(pad).pads[0].lofi);
   pad = AudioPadInfo.encodePad({ lofi: false });
-  t.false(AudioPadInfo.fromFile(pad).pads[0].lofi);
+  t.false(new AudioPadInfo(pad).pads[0].lofi);
 
   // Loop
   pad = AudioPadInfo.encodePad({ loop: true });
-  t.true(AudioPadInfo.fromFile(pad).pads[0].loop);
+  t.true(new AudioPadInfo(pad).pads[0].loop);
   pad = AudioPadInfo.encodePad({ loop: false });
-  t.false(AudioPadInfo.fromFile(pad).pads[0].loop);
+  t.false(new AudioPadInfo(pad).pads[0].loop);
 
   // Gate
   pad = AudioPadInfo.encodePad({ gate: true });
-  t.true(AudioPadInfo.fromFile(pad).pads[0].gate);
+  t.true(new AudioPadInfo(pad).pads[0].gate);
   pad = AudioPadInfo.encodePad({ gate: false });
-  t.false(AudioPadInfo.fromFile(pad).pads[0].gate);
+  t.false(new AudioPadInfo(pad).pads[0].gate);
 
   // Reverse
   pad = AudioPadInfo.encodePad({ reverse: true });
-  t.true(AudioPadInfo.fromFile(pad).pads[0].reverse);
+  t.true(new AudioPadInfo(pad).pads[0].reverse);
   pad = AudioPadInfo.encodePad({ reverse: false });
-  t.false(AudioPadInfo.fromFile(pad).pads[0].reverse);
+  t.false(new AudioPadInfo(pad).pads[0].reverse);
 
   // Format
   pad = AudioPadInfo.encodePad({ format: 'AIFF' });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].format, 'AIFF');
+  t.is(new AudioPadInfo(pad).pads[0].format, 'AIFF');
   pad = AudioPadInfo.encodePad({ format: 'WAVE' });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].format, 'WAVE');
+  t.is(new AudioPadInfo(pad).pads[0].format, 'WAVE');
 
   // Channels
   pad = AudioPadInfo.encodePad({ channels: 'Stereo' });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].channels, 'Stereo');
+  t.is(new AudioPadInfo(pad).pads[0].channels, 'Stereo');
   pad = AudioPadInfo.encodePad({ channels: 2 });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].channels, 'Stereo');
+  t.is(new AudioPadInfo(pad).pads[0].channels, 'Stereo');
   pad = AudioPadInfo.encodePad({ channels: 'Mono' });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].channels, 'Mono');
+  t.is(new AudioPadInfo(pad).pads[0].channels, 'Mono');
   pad = AudioPadInfo.encodePad({ channels: 1 });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].channels, 'Mono');
+  t.is(new AudioPadInfo(pad).pads[0].channels, 'Mono');
 
   // Tempo Mode
   pad = AudioPadInfo.encodePad({ tempoMode: 'User' });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].tempoMode, 'User');
+  t.is(new AudioPadInfo(pad).pads[0].tempoMode, 'User');
   pad = AudioPadInfo.encodePad({ tempoMode: 2 });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].tempoMode, 'User');
+  t.is(new AudioPadInfo(pad).pads[0].tempoMode, 'User');
   pad = AudioPadInfo.encodePad({ tempoMode: 'Pattern' });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].tempoMode, 'Pattern');
+  t.is(new AudioPadInfo(pad).pads[0].tempoMode, 'Pattern');
   pad = AudioPadInfo.encodePad({ tempoMode: 1 });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].tempoMode, 'Pattern');
+  t.is(new AudioPadInfo(pad).pads[0].tempoMode, 'Pattern');
   pad = AudioPadInfo.encodePad({ tempoMode: 'Off' });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].tempoMode, 'Off');
+  t.is(new AudioPadInfo(pad).pads[0].tempoMode, 'Off');
   pad = AudioPadInfo.encodePad({ tempoMode: 0 });
-  t.is(AudioPadInfo.fromFile(pad).pads[0].tempoMode, 'Off');
+  t.is(new AudioPadInfo(pad).pads[0].tempoMode, 'Off');
 });
 
 test('AudioWAV.encodePad(data): throws an error with invalid volumes', (t) => {
