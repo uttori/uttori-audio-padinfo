@@ -5,6 +5,10 @@
 [![Minified + GZip](https://badgen.net/bundlephobia/minzip/@uttori/audio-padinfo)](https://bundlephobia.com/result?p=@uttori/audio-padinfo)
 [![Minified](https://badgen.net/bundlephobia/min/@uttori/audio-padinfo)](https://bundlephobia.com/result?p=@uttori/audio-padinfo)
 
+# Package Moved
+
+No longer supported, project has been integrated into https://github.com/uttori/uttori-data-tools directly.
+
 # Uttori Pad Info & SP-404 Pattern Utility
 
 Utilities to manipulate the PAD_INFO.BIN file for SP-404 / SP-404SX / SP-404A series of samplers, and to manipulate pattern files and convert between MIDI and pattern files.
